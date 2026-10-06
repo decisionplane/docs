@@ -1,0 +1,186 @@
+/*
+ * DecisionPlane visual system, shared with decisionplane.dev.
+ * Petrol-steel console, sign-off amber as the one brand signal, and
+ * allow green / deny red reserved for outcomes. Condensed Archivo
+ * headlines, JetBrains Mono for code only. Squared corners, no motion.
+ */
+
+:root {
+  /* light variant, for readers who switch the toggle */
+  --dp-bastion: #f4f7f7;
+  --dp-bulkhead: #ffffff;
+  --dp-raised: #e9eff0;
+  --dp-seam: #c9d6d9;
+  --dp-frost: #0f1d22;
+  --dp-haze: #4a6168;
+  --dp-faint: #6f868c;
+  --dp-amber: #a86a00;
+  --dp-amber-strong: #c98207;
+  --dp-amber-ink: #1b1405;
+  --dp-allow: #13805f;
+  --dp-deny: #c6372b;
+
+  --vp-font-family-base: 'Archivo', system-ui, -apple-system, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+}
+
+.dark {
+  --dp-bastion: #0c1519;
+  --dp-bg2: #101c21;
+  --dp-bulkhead: #14232a;
+  --dp-raised: #1a2d35;
+  --dp-seam: #24404a;
+  --dp-frost: #e3eef0;
+  --dp-haze: #8fa7ad;
+  --dp-faint: #5e777e;
+  --dp-amber: #f2b33d;
+  --dp-amber-strong: #f2b33d;
+  --dp-amber-ink: #1b1405;
+  --dp-allow: #3fcf9e;
+  --dp-deny: #ff6b5e;
+}
+
+:root,
+.dark {
+  --vp-c-bg: var(--dp-bastion);
+  --vp-c-bg-alt: var(--dp-bg2, var(--dp-raised));
+  --vp-c-bg-soft: var(--dp-bulkhead);
+  --vp-c-bg-elv: var(--dp-bulkhead);
+  --vp-c-divider: var(--dp-seam);
+  --vp-c-border: var(--dp-seam);
+  --vp-c-gutter: var(--dp-seam);
+
+  --vp-c-text-1: var(--dp-frost);
+  --vp-c-text-2: var(--dp-haze);
+  --vp-c-text-3: var(--dp-faint);
+
+  --vp-c-brand-1: var(--dp-amber);
+  --vp-c-brand-2: var(--dp-amber-strong);
+  --vp-c-brand-3: var(--dp-amber-strong);
+  --vp-c-brand-soft: color-mix(in srgb, var(--dp-amber) 14%, transparent);
+
+  --vp-button-brand-bg: var(--dp-amber-strong);
+  --vp-button-brand-border: var(--dp-amber-strong);
+  --vp-button-brand-text: var(--dp-amber-ink);
+  --vp-button-brand-hover-bg: var(--dp-amber-strong);
+  --vp-button-brand-hover-text: var(--dp-amber-ink);
+  --vp-button-brand-hover-border: var(--dp-frost);
+  --vp-button-brand-active-bg: var(--dp-amber-strong);
+  --vp-button-brand-active-text: var(--dp-amber-ink);
+  --vp-button-alt-bg: transparent;
+  --vp-button-alt-border: var(--dp-seam);
+  --vp-button-alt-text: var(--dp-frost);
+  --vp-button-alt-hover-bg: var(--dp-bulkhead);
+  --vp-button-alt-hover-border: var(--dp-haze);
+  --vp-button-alt-hover-text: var(--dp-frost);
+
+  --vp-code-block-bg: var(--dp-bg2, var(--dp-bulkhead));
+  --vp-code-bg: var(--dp-raised);
+  --vp-code-color: var(--dp-frost);
+  --vp-code-line-highlight-color: color-mix(in srgb, var(--dp-amber) 10%, transparent);
+
+  --vp-home-hero-name-color: var(--dp-frost);
+  --vp-home-hero-name-background: none;
+  --vp-home-hero-image-background-image: none;
+
+  --vp-nav-bg-color: var(--dp-bastion);
+  --vp-sidebar-bg-color: var(--dp-bastion);
+  --vp-local-nav-bg-color: var(--dp-bastion);
+
+  /* Callouts: tip = allow, warning = sign-off, danger = deny, info = neutral. */
+  --vp-custom-block-info-border: var(--dp-seam);
+  --vp-custom-block-info-bg: var(--dp-bulkhead);
+  --vp-custom-block-info-text: var(--dp-frost);
+  --vp-custom-block-tip-border: var(--dp-allow);
+  --vp-custom-block-tip-bg: var(--dp-bulkhead);
+  --vp-custom-block-tip-text: var(--dp-frost);
+  --vp-custom-block-warning-border: var(--dp-amber);
+  --vp-custom-block-warning-bg: var(--dp-bulkhead);
+  --vp-custom-block-warning-text: var(--dp-frost);
+  --vp-custom-block-danger-border: var(--dp-deny);
+  --vp-custom-block-danger-bg: var(--dp-bulkhead);
+  --vp-custom-block-danger-text: var(--dp-frost);
+  --vp-c-tip-1: var(--dp-allow);
+  --vp-c-warning-1: var(--dp-amber);
+  --vp-c-danger-1: var(--dp-deny);
+}
+
+/* ── Type ───────────────────────────────────────────────────────────── */
+
+.vp-doc h1,
+.vp-doc h2,
+.VPHero .name,
+.VPHero .text {
+  font-family: 'Archivo', system-ui, sans-serif;
+  font-stretch: 72%;
+  font-variation-settings: 'wdth' 72;
+  font-weight: 800;
+  letter-spacing: -0.005em;
+}
+
+.vp-doc h1 { font-size: 2.6rem; line-height: 1.02; }
+.vp-doc h2 { font-size: 1.85rem; line-height: 1.1; border-top-color: var(--dp-seam); }
+.vp-doc h3 { font-weight: 650; }
+
+.VPNavBarTitle .title {
+  font-stretch: 80%;
+  font-variation-settings: 'wdth' 80;
+  font-weight: 750;
+  font-size: 1.15rem;
+}
+
+/* Prose links: underlined text, not coloured runs. Amber stays a signal. */
+.vp-doc a {
+  color: var(--dp-frost);
+  text-decoration: underline;
+  text-decoration-color: var(--dp-amber);
+  text-underline-offset: 3px;
+}
+.vp-doc a:hover { text-decoration-thickness: 2px; }
+
+/* ── Shape: squared corners everywhere, no motion ───────────────────── */
+
+.vp-doc div[class*='language-'],
+.vp-doc .custom-block,
+.VPFeature,
+.VPButton,
+.vp-doc table,
+.VPLocalSearchBox .shell,
+.DocSearch-Button,
+.VPSwitchAppearance {
+  border-radius: 4px !important;
+}
+
+.vp-doc div[class*='language-'] { border: 1px solid var(--dp-seam); }
+.vp-doc :not(pre) > code { border-radius: 2px; }
+
+.vp-doc .custom-block {
+  border-width: 0 0 0 3px;
+  border-style: solid;
+}
+.vp-doc .custom-block.info { border-left-color: var(--dp-haze); }
+
+.VPButton { font-weight: 650 !important; }
+
+.VPFeature {
+  background: var(--dp-bulkhead) !important;
+  border: 1px solid var(--dp-seam) !important;
+}
+.VPFeature .title { font-weight: 650; font-size: 1.05rem; }
+
+*,
+*::before,
+*::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--dp-amber);
+  outline-offset: 3px;
+}
+
+::selection { background: color-mix(in srgb, var(--dp-amber) 35%, transparent); }
+
+.vp-doc .custom-block a { color: var(--dp-frost); }
+.VPFeature .link-text-icon { display: none; }

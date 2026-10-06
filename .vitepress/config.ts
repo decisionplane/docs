@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import { dpDark } from './code-theme'
 
 // DOCS_BASE: '/' for custom domain (docs.decisionplane.*) or apex GitHub Pages site;
 // '/decisionplane/' (or similar) for <user>.github.io/<repo>/ deploys.
@@ -8,18 +9,24 @@ export default defineConfig({
   title: 'DecisionPlane',
   description: 'The agentic trust layer — audited decisioning for software, AI, and automation.',
   cleanUrls: true,
+  appearance: 'dark',
+  markdown: { theme: { light: 'github-light', dark: dpDark } },
   srcExclude: ['README.md'],
   base,
 
   head: [
     ['link', { rel: 'icon', href: `${base}favicon.svg`, type: 'image/svg+xml' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
+    ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
+    ['link', { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500&display=swap' }],
+    ['meta', { name: 'theme-color', content: '#0C1519' }],
     ['meta', { name: 'og:type', content: 'website' }],
     ['meta', { name: 'og:title', content: 'DecisionPlane — the agentic trust layer' }],
     ['meta', { name: 'og:description', content: 'Audited decisioning for fintech ops, incident remediation, and AI automation. Every decision answers: what, why, by whose authority, and what if wrong.' }],
   ],
 
   themeConfig: {
-    logo: '/logo.svg',
+    logo: { light: '/logo-light.svg', dark: '/logo.svg', alt: '' },
     siteTitle: 'DecisionPlane',
 
     nav: [
@@ -46,7 +53,7 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'What is DecisionPlane?', link: '/guide/product' },
-            { text: '⚡ Quickstart (5 min)', link: '/guide/quickstart' },
+            { text: 'Quickstart (5 min)', link: '/guide/quickstart' },
             { text: 'Install the SDK', link: '/guide/install' },
             { text: 'Your First Decision', link: '/guide/first-decision' },
             { text: 'Inspect the Audit Chain', link: '/guide/audit-chain' },
@@ -115,7 +122,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Released under the <a href="/governance/license">BSL-1.1 license → Apache-2.0 after 4 years</a>.',
+      message: `Released under the <a href="${base}governance/license">BSL-1.1 license</a>, converting to Apache-2.0 after 4 years.`,
       copyright: 'Copyright © 2026 DecisionPlane, Inc.',
     },
 
