@@ -96,6 +96,6 @@ Ready to add a trust layer to your next automated action?
 |------|-------------------|
 | [**5-minute quickstart →**](/guide/quickstart) | Submit your first decision, apply an override, verify the audit chain |
 | [**Integration guide →**](/guide/integration) | TypeScript, Python, MCP, REST, Envoy — pick your stack |
-| [**Request access →**](https://github.com/decisionplane) | Source, container images, and deployment support for your environment |
+| [**Request access →**](mailto:hello@decisionplane.dev?subject=DecisionPlane%20access%20request) | Source, container images, and deployment support for your environment |
 
 You can be producing verified audit records in under five minutes. The governance layer doesn't have to wait for the architecture review.
