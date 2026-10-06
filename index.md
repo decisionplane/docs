@@ -17,7 +17,7 @@ hero:
       link: /guide/architecture
     - theme: alt
       text: GitHub →
-      link: https://github.com/decisionplane/decisionplane
+      link: https://github.com/decisionplane
 
 features:
   - icon: "⚙️"
@@ -45,12 +45,7 @@ features:
 npm install @decisionplane/mcp
 ```
 
-Or clone the repo for the full quickstart:
-
-```bash
-git clone https://github.com/decisionplane/decisionplane
-cd decisionplane && pnpm install && pnpm dev
-```
+For the full platform (daemon, approvals, multi-org audit), [request access](https://github.com/decisionplane) to the source and container images.
 
 → [Read the 5-minute quickstart](/guide/quickstart) · [Browse the SDK reference](/reference/sdk) · [npm package](https://www.npmjs.com/package/@decisionplane/mcp)
 
@@ -90,7 +85,7 @@ cd decisionplane && pnpm install && pnpm dev
 ## Links
 
 - **Docs:** [Quickstart](/guide/quickstart) · [Architecture](/guide/architecture) · [Integration](/guide/integration) · [SDK reference](/reference/sdk) · [Governance](/governance/)
-- **Code:** [github.com/decisionplane/decisionplane](https://github.com/decisionplane/decisionplane) · [decisionplane-mcp-demo](https://github.com/decisionplane/decisionplane-mcp-demo)
+- **Code:** [github.com/decisionplane](https://github.com/decisionplane) · [decisionplane-mcp-demo](https://github.com/decisionplane/decisionplane-mcp-demo)
 - **Packages:** [`@decisionplane/mcp` on npm](https://www.npmjs.com/package/@decisionplane/mcp)
 - **License:** [BSL-1.1 → Apache-2.0 after 4 years](/governance/license)
 

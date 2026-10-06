@@ -18,6 +18,10 @@ This page covers everything you need to integrate DecisionPlane into an existing
 
 All paths except pure library mode require the daemon running.
 
+::: info Access required
+DecisionPlane source and container images are available to customers and design partners. [Request access →](https://github.com/decisionplane)
+:::
+
 **Docker (fastest):**
 ```bash
 docker run -d --name dp \
@@ -25,13 +29,11 @@ docker run -d --name dp \
   -e AUDIT_BACKEND=sqlite \
   -e AUDIT_DB=/data/audit.db \
   -v dp-data:/data \
-  ghcr.io/fa-lbaldwin/decisionplane:latest
+  <decisionplane-image>:<version>   # provided with access
 ```
 
-**From source:**
+**From source** (in your DecisionPlane checkout):
 ```bash
-git clone https://github.com/decisionplane/decisionplane
-cd decisionplane
 pnpm install && pnpm dev
 ```
 

@@ -1,6 +1,6 @@
 # What is DecisionPlane?
 
-**DecisionPlane is the policy and audit layer between your application and every automated decision that can hurt someone.**
+**DecisionPlane is the policy and audit layer between your systems and every automated decision that touches customer money, data, or access — governed before it runs, provable after.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 Automated systems make thousands of high-stakes decisions every day — approving refunds, executing remediations, denying healthcare claims, triggering trades. Most engineering teams ship those decisions as raw code: a function returns `true`, a webhook fires, money moves. Nobody questions the architecture until the first regulator asks for the audit trail, the first chargeback dispute lands in court, or an AI agent approves $200,000 in fraudulent refunds over a weekend with no human in the loop.
 
-The problem isn't that automation is wrong. The problem is that ungoverned automation accumulates silent risk. When a decision is embedded in application logic — a conditional, a model output, a workflow step — it has no provenance. You can't prove what inputs produced it, which rule triggered it, or who was accountable. When that decision turns out to be wrong, you can't reproduce the reasoning, you can't demonstrate due diligence to a regulator, and you can't make the victim whole with any paper trail behind you.
+The problem isn't that automation is wrong. The problem is that ungoverned automation accumulates silent risk. When a decision is embedded in application logic — a conditional, a model output, a workflow step — it has no provenance. You can't prove what inputs produced it, which rule triggered it, or who was accountable. When that decision turns out to be wrong, you can't reproduce the reasoning, you can't demonstrate due diligence to a regulator, and you can't make affected customers whole with a defensible record behind you.
 
 The rise of AI agents makes this worse by an order of magnitude. An AI agent acting autonomously can chain dozens of high-stakes decisions in seconds, each dependent on the last, with no natural checkpoint for human review. Without an explicit trust layer, the question "who authorized this?" has no answer — and increasingly, that is the question regulators, boards, and courts are asking first.
 
@@ -96,6 +96,6 @@ Ready to add a trust layer to your next automated action?
 |------|-------------------|
 | [**5-minute quickstart →**](/guide/quickstart) | Submit your first decision, apply an override, verify the audit chain |
 | [**Integration guide →**](/guide/integration) | TypeScript, Python, MCP, REST, Envoy — pick your stack |
-| [**GitHub →**](https://github.com/decisionplane/decisionplane) | Source code, examples, issues, discussions |
+| [**Request access →**](https://github.com/decisionplane) | Source, container images, and deployment support for your environment |
 
 You can be producing verified audit records in under five minutes. The governance layer doesn't have to wait for the architecture review.

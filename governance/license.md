@@ -32,6 +32,6 @@ After four years, every version converts to Apache-2.0 unconditionally.
 
 ### Full text
 
-The full license text is in [`LICENSE`](https://github.com/decisionplane/decisionplane/blob/main/LICENSE) in the repository root.
+The full license text is in [`LICENSE`](https://github.com/decisionplane/docs/blob/main/LICENSE) in the repository root.
 
 For licensing questions: [legal@decisionplane.dev](mailto:legal@decisionplane.dev)

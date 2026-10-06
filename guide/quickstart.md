@@ -9,11 +9,15 @@ Get a verified audit chain in under 5 minutes.
 
 ---
 
-## Step 1 — Clone and install (60 seconds)
+## Step 1 — Install (60 seconds)
+
+::: info Access required
+DecisionPlane source and container images are available to customers and design partners. [Request access →](https://github.com/decisionplane)
+:::
+
+From your DecisionPlane checkout:
 
 ```bash
-git clone https://github.com/decisionplane/decisionplane
-cd decisionplane
 pnpm install
 ```
 

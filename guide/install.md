@@ -7,13 +7,15 @@ DecisionPlane runs **library-first** — the engine, policy evaluator, and audit
 - Node.js 22 LTS or later
 - pnpm (or npm / yarn)
 
-## Option A — Clone and run locally (5 minutes)
+## Option A — Run locally (5 minutes)
 
-The fastest path to a running system:
+::: info Access required
+DecisionPlane source and container images are available to customers and design partners. [Request access →](https://github.com/decisionplane)
+:::
+
+The fastest path to a running system, from your DecisionPlane checkout:
 
 ```bash
-git clone https://github.com/decisionplane/decisionplane
-cd decisionplane
 pnpm install
 
 # Terminal 1 — start the daemon (auto-seeds a dev token)
