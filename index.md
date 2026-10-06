@@ -45,7 +45,7 @@ features:
 npm install @decisionplane/mcp
 ```
 
-For the full platform (daemon, approvals, multi-org audit), [request access](https://github.com/decisionplane) to the source and container images.
+For the full platform (daemon, approvals, multi-org audit), [request access](mailto:hello@decisionplane.dev?subject=DecisionPlane%20access%20request) to the source and container images.
 
 → [Read the 5-minute quickstart](/guide/quickstart) · [Browse the SDK reference](/reference/sdk) · [npm package](https://www.npmjs.com/package/@decisionplane/mcp)
 

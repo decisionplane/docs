@@ -19,7 +19,7 @@ This page covers everything you need to integrate DecisionPlane into an existing
 All paths except pure library mode require the daemon running.
 
 ::: info Access required
-DecisionPlane source and container images are available to customers and design partners. [Request access →](https://github.com/decisionplane)
+DecisionPlane source and container images are available to customers and design partners. [Request access →](mailto:hello@decisionplane.dev?subject=DecisionPlane%20access%20request)
 :::
 
 **Docker (fastest):**

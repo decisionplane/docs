@@ -10,7 +10,7 @@ DecisionPlane runs **library-first** — the engine, policy evaluator, and audit
 ## Option A — Run locally (5 minutes)
 
 ::: info Access required
-DecisionPlane source and container images are available to customers and design partners. [Request access →](https://github.com/decisionplane)
+DecisionPlane source and container images are available to customers and design partners. [Request access →](mailto:hello@decisionplane.dev?subject=DecisionPlane%20access%20request)
 :::
 
 The fastest path to a running system, from your DecisionPlane checkout:

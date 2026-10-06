@@ -12,7 +12,7 @@ Get a verified audit chain in under 5 minutes.
 ## Step 1 — Install (60 seconds)
 
 ::: info Access required
-DecisionPlane source and container images are available to customers and design partners. [Request access →](https://github.com/decisionplane)
+DecisionPlane source and container images are available to customers and design partners. [Request access →](mailto:hello@decisionplane.dev?subject=DecisionPlane%20access%20request)
 :::
 
 From your DecisionPlane checkout:
