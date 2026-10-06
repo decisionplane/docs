@@ -7,34 +7,31 @@ hero:
   tagline: "Make every automated decision auditable, overridable, and legally defensible — for any agent, anywhere in your stack."
   actions:
     - theme: brand
-      text: Get started free →
+      text: Read the quickstart
       link: /guide/quickstart
     - theme: alt
-      text: What is DecisionPlane? →
+      text: What is DecisionPlane?
       link: /guide/product
     - theme: alt
-      text: Architecture & Integration →
+      text: Architecture & Integration
       link: /guide/architecture
     - theme: alt
-      text: GitHub →
+      text: GitHub
       link: https://github.com/decisionplane
 
 features:
-  - icon: "⚙️"
-    title: What it does
+  - title: What it does
     details: A policy-governed decision engine and append-only audit chain. Submit a decision (refund, remediation, trade, takedown) and DecisionPlane returns approve / deny / require_approval plus an immutable record with the input, policy version, risk signals, and actor provenance.
     link: /guide/four-pillars
-    linkText: How it works →
-  - icon: "📒"
-    title: Why audited decisions
+    linkText: How it works
+  - title: Why audited decisions
     details: Auditors, regulators, and customers will ask four questions when an automated decision goes wrong — what, why, by whose authority, what if wrong. DecisionPlane is engineered so you can answer all four with a single record id, every time.
     link: /governance/compliance
-    linkText: Compliance posture →
-  - icon: "🔌"
-    title: How it fits
+    linkText: Compliance posture
+  - title: How it fits
     details: A library, a daemon, or a managed service — your call. Drops into agent loops (LangGraph, MCP, custom), reverse proxies (Envoy ext_authz), and pipelines (Temporal, Step Functions). Same engine, same audit record, swap the vertical with one field.
     link: /guide/deployment-modes
-    linkText: Deployment modes →
+    linkText: Deployment modes
 ---
 
 <div class="vp-doc" style="max-width: 960px; margin: 4rem auto 0; padding: 0 24px;">
@@ -47,7 +44,7 @@ npm install @decisionplane/mcp
 
 For the full platform (daemon, approvals, multi-org audit), [request access](mailto:hello@decisionplane.dev?subject=DecisionPlane%20access%20request) to the source and container images.
 
-→ [Read the 5-minute quickstart](/guide/quickstart) · [Browse the SDK reference](/reference/sdk) · [npm package](https://www.npmjs.com/package/@decisionplane/mcp)
+[Read the 5-minute quickstart](/guide/quickstart) or [browse the SDK reference](/reference/sdk).
 
 ## Where DecisionPlane sits in the market
 
@@ -74,19 +71,19 @@ For the full platform (daemon, approvals, multi-org audit), [request access](mai
 
 | Path | Time | Guide |
 |------|------|-------|
-| TypeScript / Node SDK | 5 min | [Integration guide →](/guide/integration#typescript--node-sdk) |
-| Python SDK | 5 min | [Integration guide →](/guide/integration#python-sdk) |
-| MCP (Claude / AI agents) | 5 min | [Integration guide →](/guide/integration#mcp-ai-agents) |
-| REST API | 10 min | [Integration guide →](/guide/integration#rest-api-direct) |
-| Envoy Ext-AuthZ (k8s) | 20 min | [Integration guide →](/guide/integration#envoy-ext-authz) |
+| TypeScript / Node SDK | 5 min | [Integration guide](/guide/integration#typescript-node-sdk) |
+| Python SDK | 5 min | [Integration guide](/guide/integration#python-sdk) |
+| MCP (Claude / AI agents) | 5 min | [Integration guide](/guide/integration#mcp-ai-agents) |
+| REST API | 10 min | [Integration guide](/guide/integration#rest-api-direct) |
+| Envoy Ext-AuthZ (k8s) | 20 min | [Integration guide](/guide/integration#envoy-ext-authz) |
 
-→ [Full integration guide](/guide/integration) · [Architecture overview](/guide/architecture) · [5-minute quickstart](/guide/quickstart)
+See the [full integration guide](/guide/integration), the [architecture overview](/guide/architecture), or the [5-minute quickstart](/guide/quickstart).
 
 ## Links
 
 - **Docs:** [Quickstart](/guide/quickstart) · [Architecture](/guide/architecture) · [Integration](/guide/integration) · [SDK reference](/reference/sdk) · [Governance](/governance/)
 - **Code:** [github.com/decisionplane](https://github.com/decisionplane) · [decisionplane-mcp-demo](https://github.com/decisionplane/decisionplane-mcp-demo)
 - **Packages:** [`@decisionplane/mcp` on npm](https://www.npmjs.com/package/@decisionplane/mcp)
-- **License:** [BSL-1.1 → Apache-2.0 after 4 years](/governance/license)
+- **License:** [BSL-1.1, converting to Apache-2.0 after 4 years](/governance/license)
 
 </div>
