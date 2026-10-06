@@ -97,7 +97,7 @@ Fastify server on port 3000. Postgres-backed. All features enabled: multi-org RB
 docker run -p 3000:3000 \
   -e DATABASE_URL=postgres://... \
   -e CHAIN_HMAC_KEY_HEX=$(openssl rand -hex 32) \
-  ghcr.io/fa-lbaldwin/decisionplane:latest
+  <decisionplane-image>:<version>   # provided with access
 
 # Kubernetes — see k8s/manifest.yaml in the repo
 ```

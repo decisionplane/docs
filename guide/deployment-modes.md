@@ -63,4 +63,4 @@ A production-ready `Dockerfile` and `docker-compose.yml` are included in the rep
 docker compose up     # daemon + Postgres, port 3000
 ```
 
-See the [containerization walkthrough](https://github.com/decisionplane/decisionplane/blob/main/docs/walkthroughs/2026-05-22_0900_containerization_and_k8s.md) for cluster deployment.
+See the [integration guide](/guide/integration) for cluster deployment.

@@ -38,12 +38,6 @@ export default defineConfig({
           { text: 'SOC 2 Scope', link: '/governance/soc2' },
         ],
       },
-      {
-        text: 'v0.1',
-        items: [
-          { text: 'Changelog', link: 'https://github.com/decisionplane/decisionplane/releases' },
-        ],
-      },
     ],
 
     sidebar: {
@@ -117,7 +111,7 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/decisionplane/decisionplane' },
+      { icon: 'github', link: 'https://github.com/decisionplane' },
     ],
 
     footer: {
