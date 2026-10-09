@@ -30,9 +30,26 @@ The daemon exposes the same engine over HTTP (Fastify). Multiple services share 
 # Start the daemon
 pnpm dev          # SQLite, auto-seeds a dev token
 
-# Or with Postgres
-DATABASE_URL=postgres://... pnpm --filter @decisionplane/daemon start
+# Or with Postgres: bootstrap the roles and migrate once, then start the daemon
+# as the unprivileged dp_app role (see "Postgres roles" below)
+AUDIT_BACKEND=postgres TOKEN_BACKEND=postgres \
+AUDIT_DSN=postgres://dp_app:...@db:5432/decisionplane?sslmode=require \
+TRACE_DSN=postgres://dp_app:...@db:5432/decisionplane?sslmode=require \
+pnpm --filter @decisionplane/daemon start
 ```
+
+### Postgres roles
+
+In daemon mode every tenant table is protected by Postgres row-level security that is **forced** and **fails closed**: a query without a tenant context sees no rows and cannot write. To make that hold, no service connects as the database owner or a superuser:
+
+| Role | Used by | Notes |
+|---|---|---|
+| `dp_migrate` | migrations only (`pnpm migrate` with `MIGRATE_DSN`) | Owns the schema. No service connects as it |
+| `dp_app` | daemon (`AUDIT_DSN`, `TRACE_DSN`) | No superuser, no `BYPASSRLS`, owns nothing |
+| `dp_metrics` | metrics service (`METRICS_DSN`) | Grants on metrics tables only |
+| `dp_llm_proxy` | LLM proxy (`LLM_PROXY_DSN`) | Grants on proxy tables only |
+
+A new database is set up once, as the Postgres superuser, with `scripts/db/bootstrap.sh`: `roles` creates `dp_migrate`, then `pnpm migrate` runs as `dp_migrate` and creates the service roles, then `logins` gives them their passwords. Each service checks its role at startup and refuses to start if it is a superuser, can bypass RLS, or owns tables, or if the schema is behind the migrations the build requires.
 
 ```typescript
 const client = new DecisionPlaneClient({

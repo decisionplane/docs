@@ -41,7 +41,11 @@ In daemon mode: you host the daemon. We do not have access to your data unless y
 
 **SQLite (library mode):** not encrypted at rest by default. Customer is responsible for disk-level encryption in their environment.
 
-**Postgres (daemon mode):** TLS-only DSN enforced in code. `assertTlsOnlyDsn()` rejects any `DATABASE_URL` without `sslmode=require` or `sslmode=verify-full`. No unencrypted Postgres connections are possible in daemon mode.
+**Postgres (daemon mode):** TLS-only DSNs enforced in code. `assertTlsOnlyDsn()` rejects every service DSN without `sslmode=require`, `verify-ca` or `verify-full`. The only override is `DECISIONPLANE_ALLOW_INSECURE_DSN=1`, which is meant for development and test environments; production deployments must keep TLS on.
+
+## Tenant isolation
+
+**Daemon mode:** each org's data is separated by Postgres row-level security that is forced on every tenant table and fails closed: without a tenant context a query returns no rows and cannot write. Services connect as roles that are not superusers, cannot bypass RLS and own no tables, and each service checks this at startup. Isolation is tested in CI on every change: a catalog check of every table, policy and grant, a per-table isolation matrix, and a cross-org API suite.
 
 ## What we tell buyers today
 

@@ -26,7 +26,7 @@ Your App
         └─▶ Auth Middleware  (token → org_id + role)
               └─▶ Policy Engine  (first-matching rule wins)
                     └─▶ Audit Chain  (HMAC-SHA256 append)
-                          └─▶ Postgres  (RLS-scoped by org)
+                          └─▶ Postgres  (forced, fail-closed RLS per org)
                                 └─▶ Decision record returned
 ```
 
@@ -95,7 +95,9 @@ Fastify server on port 3000. Postgres-backed. All features enabled: multi-org RB
 ```bash
 # Docker
 docker run -p 3000:3000 \
-  -e DATABASE_URL=postgres://... \
+  -e AUDIT_BACKEND=postgres -e TOKEN_BACKEND=postgres \
+  -e AUDIT_DSN=postgres://dp_app:...@db:5432/decisionplane?sslmode=require \
+  -e TRACE_DSN=postgres://dp_app:...@db:5432/decisionplane?sslmode=require \
   -e CHAIN_HMAC_KEY_HEX=$(openssl rand -hex 32) \
   <decisionplane-image>:<version>   # provided with access
 
@@ -103,6 +105,8 @@ docker run -p 3000:3000 \
 ```
 
 Best for: multi-service, multi-org, or production deployments.
+
+Tenant isolation in daemon mode is enforced by Postgres, not only by the application. Every tenant table has row-level security that is forced and has no exceptions for a missing tenant. Each request runs in a transaction scoped to the caller's org, and background jobs process one org at a time. The daemon connects as a role that cannot bypass these policies, and it refuses to start otherwise. See [Library vs Daemon Mode](/guide/deployment-modes#postgres-roles) for the database roles.
 
 ### MCP Mode (AI Agents)
 
