@@ -39,7 +39,7 @@ pnpm install && pnpm dev
 
 The daemon prints your dev token to the console and writes it to `.dev-api-key`.
 
-**Kubernetes:** see `k8s/manifest.yaml` in the repo. Set `CHAIN_HMAC_KEY_HEX` and `DATABASE_URL` as secrets.
+**Kubernetes:** see `k8s/manifest.yaml` in the repo. `CHAIN_HMAC_KEY_HEX` and each service's database DSN come from Secrets (one database role per service; see [Postgres roles](/guide/deployment-modes#postgres-roles)), and migrations run as a Job before the services start.
 
 ---
 
