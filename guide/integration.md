@@ -438,7 +438,7 @@ See [Policy DSL Reference](/guide/policy-dsl) for the full schema.
 | Feature | Description | Endpoint / Config |
 |---------|-------------|-------------------|
 | **Decisions** | Submit and retrieve verdicts | `POST /v1/decisions` |
-| **Audit chain** | Tamper-evident HMAC-linked log | `GET /v1/audit/chain` |
+| **Audit chain** | Hash-linked log of decisions (HMAC with `CHAIN_HMAC_KEY_HEX`) | `GET /v1/audit/chain` |
 | **Approval flow** | Human-in-the-loop escalation | `POST /v1/approvals/:id/approve` |
 | **Policy CRUD** | Manage policies via API or UI | `GET|POST /v1/policies` |
 | **Overrides** | Retroactively modify a decision | `POST /v1/decisions/:id/overrides` |
@@ -446,8 +446,8 @@ See [Policy DSL Reference](/guide/policy-dsl) for the full schema.
 | **Traces** | Per-request actor telemetry | `GET /v1/traces` |
 | **Org RBAC** | Multi-tenant with roles | `POST /v1/orgs` |
 | **Metrics** | Prometheus + per-org aggregates | `GET /metrics`, `GET /v1/orgs/:id/metrics` |
-| **Retention** | Configurable 7-year archive | `auditRetentionDays` org setting |
+| **Retention** | Copies decisions older than N days to an append-only archive; never deletes | `AUDIT_RETENTION_DAYS` (daemon). The per-org `auditRetentionDays` setting is stored but not yet applied |
 | **MCP tools** | AI agent integration | `npx @decisionplane/mcp` |
 | **Envoy adapter** | Service mesh auth | Helm chart |
 | **Python SDK** | Native Python client | `pip install decisionplane` |
-| **Chain HMAC** | EDPB Art.8.3(c) pseudonymisation | `chainHmacKeyHex` org setting |
+| **Chain HMAC** | Keyed chain hashes | `CHAIN_HMAC_KEY_HEX` (daemon). The `chainHmacKeyHex` org setting verifies signed actor claims, not the chain |

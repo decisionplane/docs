@@ -34,13 +34,13 @@ DecisionPlane gives your agent a `evaluate` call it makes before any consequenti
 
 MiFID II, the CFPB, HIPAA, SOC 2 — regulators in financial services and healthcare share a common expectation: if an automated system makes a decision that affects a customer, you must be able to reconstruct that decision completely. Who requested it, what data it saw, which rule applied, and what the outcome was.
 
-DecisionPlane was designed for this use case. Every `DecisionRecord` captures the full request snapshot, the matched policy version, the actor provenance chain, and a SHA-256 position in the audit chain. Compliance exports, retention schedules, and HMAC-keyed tamper detection are first-class features, not afterthoughts.
+DecisionPlane was designed for this use case. Every `DecisionRecord` captures the full request snapshot, the matched policy version, the actor provenance chain, and a position in the hash-chained audit log. HMAC-keyed tamper detection and append-only storage are built in; see [Audit-Log Retention](/governance/retention) for which retention tiers ship today.
 
 ### Platform teams managing multiple AI services at scale
 
 You have five teams shipping AI-powered features. Each team has its own model, its own prompts, its own action surface. Policy enforcement is scattered across codebases. When the CTO asks "what can our AI actually do on behalf of a user?", nobody has a complete answer.
 
-DecisionPlane centralizes policy authority. Org-scoped policy namespaces mean each team owns its rules. The shared audit chain means every decision — regardless of which service made it — is visible in one place. When a new AI feature ships, the platform team wires it into DecisionPlane and the governance is inherited, not negotiated.
+DecisionPlane centralizes policy authority. Each org can be given its own policy directory, so each team owns its rules. The shared audit chain means every decision — regardless of which service made it — is visible in one place. When a new AI feature ships, the platform team wires it into DecisionPlane and the governance is inherited, not negotiated.
 
 ---
 
@@ -62,13 +62,13 @@ The `policyVersion` field names the exact policy and version that matched. The e
 
 ### 3. By whose authority?
 
-The `actor` field in every `DecisionRequest` carries full provenance: kind (`human`, `agent`, `system`), principal ID, roles, delegation chain depth, and MFA attestation. For overrides, `overriddenBy` names the human who intervened.
+The `actor` field in every `DecisionRequest` carries full provenance: kind (`human`, `agent`, `system`), principal ID, roles, delegation chain depth, and MFA attestation. For overrides, `overriddenBy` names the human who intervened. The actor is supplied by the caller; the daemon records the authenticated org, and verifying the actor against the token is planned.
 
 > **Scenario:** An AI agent in your incident response pipeline triggers an auto-rollback. Post-incident review asks: was this authorized? The record shows `actor.kind: "agent"`, `actor.principal.id: "incident-bot-v1"`, `actor.principal.roles: ["sre"]`, and a delegation chain tracing back to the on-call engineer who enabled autonomous mode at 2:17 AM. The authority chain is complete.
 
 ### 4. What if it was wrong?
 
-The override path appends a new `DecisionRecord` to the audit chain, referencing the original `requestId` and recording who overrode it, why, and with what new outcome. The original record is never mutated. The SHA-256 hash chain guarantees that no record — original or override — can be quietly altered after the fact.
+The override path appends a new `DecisionRecord` to the audit chain, referencing the original `requestId` and recording who overrode it, why, and with what new outcome. The original record is never mutated, and the hash chain makes a change to any recorded outcome — original or override — detectable.
 
 > **Scenario:** An AI agent denies a healthcare prior-authorization. The treating physician escalates. A clinical reviewer approves the override. The audit chain now has two records for the same request: the original denial with its full policy context, and the override with the reviewer's name, rationale, and timestamp. The appeals trail is self-contained in the chain — no separate ticketing system required.
 

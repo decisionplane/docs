@@ -186,7 +186,7 @@ chain.headHash : def456...
 chain.verifiedAt: 2026-05-24T...Z
 ```
 
-`chain.ok: true` means no record has been tampered with. Each `hash` covers the prior record's hash plus the full record content — any edit anywhere in history breaks the chain.
+`chain.ok: true` means no recorded decision has been altered. Each `hash` covers the prior record's hash plus the decision's fields, so editing a past decision breaks the chain. The request snapshot is not yet covered; see [What the hash covers](/guide/audit-chain#what-the-hash-covers).
 
 ---
 

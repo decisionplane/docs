@@ -1,6 +1,6 @@
 # Compliance Posture
 
-_Current-state position as of 2026-05-22. Written to be handed to a regulated-industry buyer's diligence team without amendment. Where the honest answer is "we don't have that," we say so and name the owner who will close it._
+_Current-state position, last reviewed 2026-10-13. Written to be handed to a regulated-industry buyer's diligence team without amendment. Where the honest answer is "we don't have that," we say so and name the owner who will close it._
 
 ## SOC 2
 
@@ -12,9 +12,9 @@ We will not characterise SOC 2 work as "in flight" until those things are litera
 
 **Compensating controls today:**
 - Deny-by-default policy engine
-- Append-only SHA-256 hash-chained audit log (row-level deny-update triggers on Postgres)
+- Append-only, hash-chained audit log: Postgres triggers refuse UPDATE, DELETE and TRUNCATE on decision records. The hash covers each decision's outcome, reason, policy version and decider, but not yet the request inputs ([what the hash covers](/guide/audit-chain#what-the-hash-covers))
 - All writes through Zod-validated schema boundaries
-- Two-person GitHub review on protected `main`
+- Every change lands through a pull request that must pass CI: build, unit and Postgres integration tests, tenant-isolation tests and a secret scan. DecisionPlane has one maintainer today, so changes are not independently reviewed and `main` is not branch-protected
 - No production hosted system to breach
 
 → [Full SOC 2 scope →](/governance/soc2)
@@ -35,13 +35,13 @@ In library mode: you run the engine, you own the data. We never see it.
 
 In daemon mode: you host the daemon. We do not have access to your data unless you grant it.
 
-**Right to erasure (Art. 17):** Audit records are never deleted — the hash chain is the product. The supported pattern is crypto-shredding: encrypt sensitive fields at write-time with a per-subject key; destroy the key to make plaintext unrecoverable while preserving chain integrity.
+**Right to erasure (Art. 17):** Audit records are never deleted — the hash chain is the product. Decision inputs, including actor identifiers, are stored unencrypted in append-only tables, so they cannot be erased today. Until per-org encryption with key destruction (crypto-shredding) ships, send pseudonymous identifiers rather than personal data in decision requests.
 
 ## Encryption
 
 **SQLite (library mode):** not encrypted at rest by default. Customer is responsible for disk-level encryption in their environment.
 
-**Postgres (daemon mode):** TLS-only DSNs enforced in code. `assertTlsOnlyDsn()` rejects every service DSN without `sslmode=require`, `verify-ca` or `verify-full`. The only override is `DECISIONPLANE_ALLOW_INSECURE_DSN=1`, which is meant for development and test environments; production deployments must keep TLS on.
+**Postgres (daemon mode):** TLS-only DSNs enforced in code. `assertTlsOnlyDsn()` rejects every service DSN without `sslmode=require`, `verify-ca` or `verify-full`. The only override is `DECISIONPLANE_ALLOW_INSECURE_DSN=1`, which is meant for development and test environments; production deployments must keep TLS on. `sslmode=require` encrypts the connection but does not verify the server certificate: use `verify-full` in production.
 
 ## Tenant isolation
 
