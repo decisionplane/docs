@@ -18,15 +18,17 @@ The SDK keeps every audit record **forever** by default. This is intentional —
 
 ## Regulatory floors
 
-Enforced in code when the customer flags scope. The SDK refuses to delete or expire below the floor.
+Decision records are never deleted or updated: Postgres triggers refuse it in daemon mode, so every floor below is met for decisions by construction. In daemon mode, `AUDIT_RETENTION_DAYS` copies older decisions into an append-only archive table; it never deletes them.
+
+For traces, a Postgres trigger refuses to delete a trace tagged `sox`, `hipaa` or `pci` before its floor, counted from when it was recorded. The library-level check (`checkRetentionFloor`) is not yet wired into a delete path.
 
 | Scope tag | Floor | Source |
 | --- | --- | --- |
 | `scope: "sox"` | **7 years** in warm or cold | Sarbanes-Oxley §802/§1102 |
-| `scope: "hipaa"` | **6 years** from creation or last access | 45 CFR §164.530(j) |
+| `scope: "hipaa"` | **6 years** from creation (last access is not tracked) | 45 CFR §164.530(j) |
 | `scope: "pci"` | **1 year hot, 1 year accessible** | PCI-DSS v4.0 §10.5.1 |
 | `scope: "gdpr"` | No floor. Customer-defined. | — |
-| No tag | 1 year warm when warm tier enabled; otherwise hot forever | — |
+| No tag | No floor on traces; decisions are kept forever | — |
 
 ## Shard format and manifest integrity
 
@@ -52,11 +54,9 @@ A future enhancement will add asymmetric manifest signing (Ed25519 public key pu
 
 ## GDPR erasure
 
-Audit records are never deleted in response to a right-to-erasure request. The supported pattern is **crypto-shredding**:
+Audit records are never deleted in response to a right-to-erasure request.
 
-1. Encrypt sensitive fields at write-time with a per-subject key.
-2. To honour Art. 17, destroy the key.
-3. Ciphertext remains in the chain — chain integrity preserved — plaintext is unrecoverable.
+**Not yet supported: crypto-shredding.** The planned pattern encrypts sensitive fields at write time with a per-org key and destroys the key to make the plaintext unrecoverable while the chain stays intact. Today, decision inputs (including actor identifiers) are stored unencrypted, so they cannot be erased. Send pseudonymous identifiers rather than personal data in decision requests.
 
 ## `dp audit verify-chain`
 
@@ -80,11 +80,15 @@ dp audit verify-chain --s3-bucket my-audit-shards --s3-prefix shards/
 PASS  hot=0  warm=10000000  total=10000000  lastHash=<hex>  elapsed=48230ms
 ```
 
-## What ships today (v1, DEC-110)
+## What ships today
 
-- **Hot tier** — SQLite WAL and Postgres, indefinite retention.
-- **Warm tier** — Per-day NDJSON.gz shards to S3/GCS/Azure Blob via `WarmTierWriter`.
-- **Cold tier** — `buildArchivalEvent` emits `decision.archived` when records move to cold storage.
-- **Scope tags and regulatory floors** — enforced at application layer (`checkRetentionFloor`) and DB layer (Postgres trigger in migration 0003).
-- **`dp audit verify-chain`** — hot + warm cross-tier chain verification.
-- **Shard manifests** — HMAC-SHA256 integrity protection.
+- **Hot tier** — SQLite WAL and Postgres, indefinite retention. Decisions are append-only.
+- **Scope-tag floors for traces** — enforced by a Postgres trigger (migration 0003).
+- **Shard format and verification** — the warm-tier shard and manifest format, the `WarmTierWriter` library class and `dp audit verify-chain` (hot and warm, offline or from S3).
+
+## Not yet built
+
+- **Automatic warm-tier export.** Nothing in the daemon writes shards on a schedule yet; the S3 adapter works, and the GCS and Azure adapters need optional packages.
+- **Cold tier events.** `buildArchivalEvent` exists, but nothing emits `decision.archived` yet.
+- **Application-level floor checks** on delete paths, and HIPAA last-access tracking.
+- **Crypto-shredding** for GDPR erasure (see above).

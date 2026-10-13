@@ -33,11 +33,11 @@ Not selected. Shortlist: Prescient Assurance, A-LIGN, Insight Assurance. Selecti
 ## Compensating controls today
 
 - Deny-by-default policy engine
-- Append-only SHA-256 hash-chained audit log (Postgres row-level deny-update triggers)
+- Append-only, hash-chained audit log (Postgres triggers refuse UPDATE, DELETE and TRUNCATE on decision records; the hash does not yet cover request inputs)
 - ULID identifiers for every primitive
 - All writes through Zod-validated schema boundaries
-- Two-person GitHub review on protected `main`
-- TLS-only Postgres DSN enforced in code
+- Every change lands through a pull request that must pass CI, including tenant-isolation tests and a secret scan. One maintainer today: no independent review, `main` not branch-protected
+- TLS-only Postgres DSN enforced in code (`sslmode=require` does not verify the server certificate; use `verify-full`)
 - No production hosted system to breach
 
 ## What we tell buyers

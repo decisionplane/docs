@@ -8,9 +8,9 @@ DecisionPlane is an **audited AI decisioning engine**. Every action your AI agen
 |---------|-------------|
 | **Decision** | A single allow/deny/escalate verdict on an action request |
 | **Policy** | YAML rule that matches requests by actor, action, and context |
-| **Audit Chain** | Append-only log of decisions, each linked by HMAC-SHA256 hash |
+| **Audit Chain** | Append-only log of decisions, each linked to the previous by hash (HMAC-SHA256 when `CHAIN_HMAC_KEY_HEX` is set) |
 | **Actor** | The entity making the request — agent, human, or service |
-| **Org** | An isolated tenant — separate policies, tokens, audit log, and metrics |
+| **Org** | An isolated tenant — separate tokens, audit log, and metrics; optionally its own policy directory |
 
 ## Architecture Diagram
 
@@ -25,7 +25,7 @@ Your App
   └─▶ SDK / HTTP / MCP / Envoy
         └─▶ Auth Middleware  (token → org_id + role)
               └─▶ Policy Engine  (first-matching rule wins)
-                    └─▶ Audit Chain  (HMAC-SHA256 append)
+                    └─▶ Audit Chain  (hash-chained append)
                           └─▶ Postgres  (forced, fail-closed RLS per org)
                                 └─▶ Decision record returned
 ```
@@ -39,11 +39,11 @@ Evaluates requests against YAML policies. Two formats are supported:
 - **Rules format** — explicit conditions with operators (`eq`, `matches`, `in`, `lte`, etc.)
 - **Plan DSL format** — risk-factor scoring with thresholds (`allow_below`, `approval_below`, `deny_above`)
 
-Policies are org-scoped. Each org has its own policy directory and version namespace.
+Policies are loaded from YAML files. All orgs share the daemon's policy directory (`POLICY_DIR`) unless an org is given its own `policy_dir`.
 
 ### Audit Chain
 
-Every decision writes an immutable record linked to the previous by hash:
+Every decision writes an append-only record linked to the previous by hash:
 
 ```
 GENESIS (0x000...000)
@@ -52,9 +52,9 @@ GENESIS (0x000...000)
               └─▶ ...
 ```
 
-`GET /v1/audit/chain` walks the full chain and returns `{ ok, count, lastHash }`. Any mutation breaks the chain — tamper detection is automatic.
+`GET /v1/audit/chain` walks the caller's chains and returns `{ ok, length, headHash }`. A change to a recorded decision breaks the chain. The hash does not yet cover the request snapshot; see [What the hash covers](/guide/audit-chain#what-the-hash-covers).
 
-The `chainHmacKeyHex` org setting activates HMAC-SHA256 keying (required for production — satisfies EDPB Art. 8.3(c) pseudonymisation). Without it the chain falls back to plain SHA-256.
+The daemon's `CHAIN_HMAC_KEY_HEX` turns on HMAC-SHA256 keying; set it in production. Without it the chain uses plain SHA-256. (The org setting `chainHmacKeyHex` verifies signed actor claims and does not key the chain.)
 
 ### Approval Flow
 
@@ -66,13 +66,13 @@ escalate → POST /v1/approvals/:id/approve  (or /reject)
          → original caller receives final verdict
 ```
 
-Approvals have configurable timeouts and required roles.
+Approvals expire after a configurable timeout (default 1 hour). An approval can name required roles; these are enforced when it is resolved in Slack. The REST API checks only the `approvals:write` scope today.
 
 ### Org RBAC
 
 Every API token is scoped to an organization. Row-Level Security in Postgres ensures queries from one org never see another org's data.
 
-Built-in roles: `owner` → `admin` → `member` → `viewer`. Custom roles can be defined per org.
+Built-in roles: `owner` → `admin` → `member` → `viewer`.
 
 ---
 
@@ -98,7 +98,7 @@ docker run -p 3000:3000 \
   -e AUDIT_BACKEND=postgres -e TOKEN_BACKEND=postgres \
   -e AUDIT_DSN=postgres://dp_app:...@db:5432/decisionplane?sslmode=require \
   -e TRACE_DSN=postgres://dp_app:...@db:5432/decisionplane?sslmode=require \
-  -e CHAIN_HMAC_KEY_HEX=$(openssl rand -hex 32) \
+  -e CHAIN_HMAC_KEY_HEX=<64 hex chars; generate once and reuse> \
   <decisionplane-image>:<version>   # provided with access
 
 # Kubernetes — see k8s/manifest.yaml in the repo

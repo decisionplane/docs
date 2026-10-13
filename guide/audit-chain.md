@@ -1,6 +1,6 @@
 # Inspect the Audit Chain
 
-Every decision — including overrides — is appended to an SHA-256 hash chain. Each record's `hash` is derived from its own content plus the previous record's `hash`, so any tampering is detectable by anyone with read access.
+Every decision — including overrides — is appended to a hash chain. Each record's `hash` covers the decision's fields plus the previous record's `hash`, so changing a recorded decision breaks every later link. [What the hash covers](#what-the-hash-covers) and [its limits](#limits) are listed below.
 
 ## Verify chain integrity
 
@@ -23,10 +23,22 @@ if (!result.ok) {
 
 | Property | How it's enforced |
 | --- | --- |
-| **Append-only** | All writes go through the engine — no direct DB mutations. |
-| **Tamper-evidence** | Each `hash` covers the prior `prevHash` + record content. |
+| **Append-only** | All writes go through the engine. In Postgres, triggers refuse UPDATE, DELETE and TRUNCATE on decision records, and the service role can only SELECT and INSERT. |
+| **Tamper-evidence** | Each `hash` covers the prior `prevHash` and the decision fields listed below. |
 | **Override visibility** | Overrides are separate records referencing `requestId`, not edits to the original. |
 | **Chain continuity** | `verifyChain()` reads all records in insert order and recomputes. |
+
+## What the hash covers
+
+The hash covers `id`, `requestId`, `outcome`, `reason`, `decidedAt`, `decidedBy`, `policyVersion`, `prevHash`, `chainKey`, `actorSignature` and the latency fields.
+
+It does **not** cover the `request` snapshot (action, actor, resource, context). The snapshot is stored with the record, but a change to it does not break the chain. Binding a digest of the request into the hash is planned.
+
+## Limits
+
+- **Unkeyed chains.** Without `CHAIN_HMAC_KEY_HEX` the chain uses plain SHA-256: anyone who can write to the database can rewrite a record and recompute every later hash. Set the key in production (see below).
+- **Truncation.** Removing the newest records leaves a valid shorter chain. External anchoring of chain heads is planned.
+- **Database owner.** The triggers stop the application, not the schema owner or a superuser, who can disable them.
 
 ## Reading individual records
 
@@ -66,32 +78,18 @@ Expected output:
 
 ## HMAC keying for production deployments
 
-By default the chain uses plain SHA-256, which is sufficient for development and internal audit. For production deployments that handle personal data, you can bind a secret HMAC-SHA-256 key to each org so that chain hashes are pseudonymised and cannot be cross-correlated without the key.
-
-### Setting the key
-
-Generate a cryptographically secure 32-byte key and encode it as 64 lowercase hex characters:
+The chain key is set on the daemon, not per org: `CHAIN_HMAC_KEY_HEX`, 64 hex characters (32 bytes). With it, every chain hash is HMAC-SHA256 under that key, so someone with database access but without the key cannot forge a valid chain. Without it the chain uses plain SHA-256.
 
 ```bash
-openssl rand -hex 32
+openssl rand -hex 32   # generate once, store in your secret manager
 ```
 
-Then apply it to your org:
+- Pass the same key on every start. Records written under one key only verify with that key, so a lost key means existing records can no longer be verified — back it up externally.
+- There is one key per daemon today; per-org keys and rotation are planned.
 
-```bash
-curl -X PATCH https://your-host/v1/orgs/<orgId>/settings \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"chainHmacKeyHex": "<64-char hex>"}'
-```
+### The `chainHmacKeyHex` org setting
 
-Or use the **Org Admin → Generate** button in the UI, which generates the key client-side using `crypto.getRandomValues()` and opens a copy-once modal before saving.
-
-### Security properties
-
-- The key is write-only: `GET /v1/orgs/:orgId/settings` never returns the value, only `chainHmacKeyHexConfigured: true | false`.
-- If the key is lost, existing chain records cannot be re-verified — back it up externally (e.g. a secrets manager).
-- Satisfies EDPB pseudonymisation requirements (Art. 8.3(c)) for audit records containing personal data.
+Despite its name, the org setting `chainHmacKeyHex` (**Org Admin → Generate** in the UI) does **not** key the audit chain. It verifies the optional `X-Actor-Claim-Sig` header: an HMAC over the token prefix and the request's agent, delegated-by and session IDs. The value is write-only through the API: `GET /v1/orgs/:orgId/settings` returns only `chainHmacKeyHexConfigured`.
 
 ---
 
